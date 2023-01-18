@@ -4,6 +4,7 @@ const express = require('express')
 const morgan = require('morgan')
 const mongoose = require('mongoose')
 const path = require('path')
+const Airplane = require('./models/airplane')
 
 const DATABASE_URL = process.env.DATABASE_URL
 const CONFIG = {
@@ -26,7 +27,35 @@ app.use(express.static('public'))
 app.use(express.json())
 
 app.get("/", (req, res) => {
-  res.send('Sever running...')
+  res.send('Server running...')
+})
+
+/* -- Create Routes -- */
+app.get('/', (req, res) => {
+  res.send('Server is now live')
+})
+
+app.get('/airplanes/seed', (req, res) => {
+  const initialPlanes = [
+    {manufacturer: 'Airbus', model: 'A350', airline: 'Delta', airborne: true},
+    {manufacturer: 'Boeing', model: '737-800', airline: 'Southwest', airborne: true},
+    {manufacturer: 'Boeing', model: '787-800', airborne: 'United', airborne: false},
+    {manufacturer: 'Airbus', mode: 'A320-Neo', airline: 'Air Canada', airborne: true}
+  ]
+
+  Airplane.deleteMany({})
+  .then(() => {
+    Airplane.create(initialPlanes)
+    .then(data => res.json(data))
+    .catch(error => console.log(`Error occurred: ${error}`))
+  })
+})
+
+/* -- Display All Aircraft's -- */
+app.get('/airplanes', (req, res) => {
+  Airplane.find({})
+    .then(airplanes => {res.json({airplanes: airplanes})})
+    .catch(error => console.log(`Error occurred: ${error}`))
 })
 
 const PORT = process.env.PORT
