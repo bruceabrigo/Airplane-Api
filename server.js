@@ -39,7 +39,7 @@ app.get('/airplanes/seed', (req, res) => {
   const initialPlanes = [
     {manufacturer: 'Airbus', model: 'A350', airline: 'Delta', airborne: true},
     {manufacturer: 'Boeing', model: '737-800', airline: 'Southwest', airborne: true},
-    {manufacturer: 'Boeing', model: '787-800', airborne: 'United', airborne: false},
+    {manufacturer: 'Boeing', model: '787-800', airline: 'United', airborne: false},
     {manufacturer: 'Airbus', mode: 'A320-Neo', airline: 'Air Canada', airborne: true}
   ]
 
@@ -55,8 +55,43 @@ app.get('/airplanes/seed', (req, res) => {
 app.get('/airplanes', (req, res) => {
   Airplane.find({})
     .then(airplanes => {res.json({airplanes: airplanes})})
-    .catch(error => console.log(`Error occurred: ${error}`))
+    .catch(err => console.log(`Error occurred: ${err}`))})
+
+
+/* -- CREATE New Aircraft -- */
+app.post('/airplanes', (req, res) => {
+  const newPlane = req.body
+  Airplane.create(newPlane)
+    .then(plane => {
+      res.status(201).json({plane:plane.toObject()})
+    })
+    .catch(err => console.log(`Error occurred: ${err}`))
 })
 
+/* -- UPDATE Existing Aircraft's -- */
+app.put('/airplanes/:id', (req, res) => {
+  const id = req.params.id
+  const updatePlane = req.body
+
+  Airplane.findByIdAndUpdate(id, updatePlane, {new: true})
+    .then(plane => {
+      console.log('The newly updated plane', plane)
+      res.sendStatus(204)
+    })
+    .catch(err => console.log(err))
+})
+
+/* -- DELETE Existing Aircraft's -- */
+app.delete('/airplanes/:id', (req, res) => {
+  const planeId = req.params.id
+
+  Airplane.findByIdAndRemove(planeId)
+    .then(() => {
+      res.sendStatus(204)
+    })
+    .catch(err => console.log(`Error occurred: ${err}`))
+})
+
+/* -- Server Handler -- */
 const PORT = process.env.PORT
 app.listen(PORT, () => console.log(`Port connection: ${PORT}`))
