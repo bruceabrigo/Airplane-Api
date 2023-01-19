@@ -1,6 +1,7 @@
 const express = require('express')
 const User = require('../models/user')
 const bcrypt = require('bcryptjs')
+const Airplane = require('../models/airplane')
 
 const router = express.Router()
 
@@ -22,5 +23,46 @@ router.post('/signup', async (req, res) => {
       res.json(err)
     })
 })
+
+/* -- POST Owner Login -- */
+// post user login to db
+router.post('/login', async (req, res) => {
+  // find username and password input
+  const {username, password} = req.body
+  // verify's and authenticates user login created previously
+  // compare user input to stored users on db
+  User.findOne({username})
+    .then(async (user) => {
+      if(user) {
+        const result = await bcrypt.compare(password, user.password)
+        // if result is true (user input can be verified) then allow user access to stored user info
+        if(result) {
+          req.session.username = username
+          req.session.loggedIn = true
+          req.session.userId = user.id
+          // send 201 no context status if result can be matched
+          res.status(201).json({user: user.toObject()})
+        } else {
+          res.json({error: 'user and pass do not match'})
+        }
+      }
+    })
+    .catch(err => {
+      console.log(err)
+      res.json(err)
+    })
+    
+})
+
+/* -- DELETE Owner Login -- */
+// create logout function
+// 'logout' by ending current user session 
+
+router.delete('/logout', (req, res) => {
+  req.session.destroy(() => { //destroys current session
+    res.sendStatus(204)
+  })
+})
+
 
 module.exports = router
