@@ -4,6 +4,7 @@ const Airplane = require('../models/airplane')
 const router = express.Router()
 
 /* -- INDEX -- */
+
 router.get('/', (req, res) => {
   Airplane.find({})
     .then(planes => {res.json({planes: planes})})

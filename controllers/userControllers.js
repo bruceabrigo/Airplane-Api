@@ -5,6 +5,12 @@ const Airplane = require('../models/airplane')
 
 const router = express.Router()
 
+/* ---------------------- Handles SIGNUP ---------------------- */
+
+router.get('/signup', (req, res) => {
+  res.render('users/signup')
+})
+
 router.post('/signup', async (req, res) => {
   // create user variable from request body
   const newUser = req.body
@@ -16,15 +22,20 @@ router.post('/signup', async (req, res) => {
   )
   User.create(newUser)
     .then(user => {
-      res.status(201).json({username: user.username})
+      res.redirect('/users/login')
     })
     .catch(err => {
       console.log(err)
-      res.json(err)
+      res.redirect(`/error?error=username%20taken`)
     })
 })
 
-/* -- POST Owner Login -- */
+/* ---------------------- Handles LOGIN ---------------------- */
+
+router.get('/login', (req, res) => {
+  res.render('users/login')
+})
+
 // post user login to db
 router.post('/login', async (req, res) => {
   // find username and password input
@@ -41,7 +52,7 @@ router.post('/login', async (req, res) => {
           req.session.loggedIn = true
           req.session.userId = user.id
           // send 201 no context status if result can be matched
-          res.status(201).json({user: user.toObject()})
+          res.redirect('/')
         } else {
           res.json({error: 'user and pass do not match'})
         }
