@@ -1,0 +1,20 @@
+{% layout 'layout.liquid' %}
+{% block content %}
+  {% if planes.length > 0 %}
+    <h2>These are the planes stored to our DB</h2>
+    <div class="row">
+      {% for plane in planes %}
+        <div class="card me-3 mb-3" style="width: 18rem">
+          <h5 class="card-header"> {{plane.airline}} </h5>
+            <div class="card-body">
+              <h5 class="card-title"> {{plane.manufacturer}} </h5>
+              <p class="card-text"> {{plane.model}} </p>
+              <a href="/airplanes/{{plane.id}}" class="btn btn-info">View {{plane.airline}} {{airline.manufacturer}} {{airplane.model}} </a>
+            </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+
+  {% endif %}
+{% endblock %}

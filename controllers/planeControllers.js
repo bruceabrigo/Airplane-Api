@@ -1,17 +1,27 @@
 const express = require('express') 
 const Airplane = require('../models/airplane')
+require('dotenv').config()
 
 const router = express.Router()
 
 /* -- INDEX -- */
 
 router.get('/', (req, res) => {
+  const { username, loggedIn, userId } = req.session
+
   Airplane.find({})
-    .then(planes => {res.json({planes: planes})})
+    .populate('owner', 'username')
+    .then(planes => {
+      res.render('planes/index', {planes, username, loggedIn, userId})
+    })
     .catch(err => {
       console.log(err)
       res.status(404).json(err) //sends 404 status if link cannot be found
     })
+})
+
+router.get('/new', (req, res) => {
+  res.render('airplanes/new', { ...req.session })
 })
 
 /* -- POST (create new plane) -- */
@@ -32,16 +42,16 @@ router.post('/', (req, res) => {
 
 /* -- GET (user specific aircraft) -- */
 // must be logged in to find aircraft's owned by the user
-router.get('/loggedin', (req, res) => { // used /loggedin in url to find user specific crafts
-  Airplane.find({owner: req.session.userId})
-  .then(airplanes => {
-    res.status(200).json({airplanes: airplanes})
-  })
-  .catch(err => {
-    console.log(err)
-    res.status(404).json(err) //sends 404 status if link cannot be found
-  })
-})
+// router.get('/loggedin', (req, res) => { // used /loggedin in url to find user specific crafts
+//   Airplane.find({owner: req.session.userId})
+//   .then(airplanes => {
+//     res.status(200).json({airplanes: airplanes})
+//   })
+//   .catch(err => {
+//     console.log(err)
+//     res.status(404).json(err) //sends 404 status if link cannot be found
+//   })
+// })
 
 /* -- UPDATE (user specific aircraft) -- */
 router.put('/:id', (req, res) => {
@@ -91,6 +101,19 @@ router.get('/:id', (req, res) => {
     .catch(err => {
       console.log(err)
       res.status(404).json(err)
+    })
+})
+
+/* -- SHOW aircrafts-- */
+router.get('/:id', (req, res) => {
+  const id = req.params.id
+  Airplane.findById(id)
+    .populate('airplane')
+    .then(airplane => {
+      res.render('airplanes/show.liquid', {airplane, ...req.session})
+    })
+    .catch(err => {
+      console.log(err)
     })
 })
 

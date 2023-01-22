@@ -1,7 +1,7 @@
 const express = require('express')
 const User = require('../models/user')
 const bcrypt = require('bcryptjs')
-const Airplane = require('../models/airplane')
+// const Airplane = require('../models/airplane')
 
 const router = express.Router()
 
@@ -54,15 +54,21 @@ router.post('/login', async (req, res) => {
           // send 201 no context status if result can be matched
           res.redirect('/')
         } else {
-          res.json({error: 'user and pass do not match'})
+          res.redirect(`/error?error=username%20or%20password%20is%20incorrect`)
         }
+      } else {
+        res.redirect(`/error?error=user%20does%20not%20exist`)
       }
     })
     .catch(err => {
       console.log(err)
       res.json(err)
     })
-    
+})
+/* ---------------------- Handles LOGOUT ---------------------- */
+
+router.get('/logout', (req, res) => {
+  res.render('users/logout')
 })
 
 /* -- DELETE Owner Login -- */
@@ -70,8 +76,9 @@ router.post('/login', async (req, res) => {
 // 'logout' by ending current user session 
 
 router.delete('/logout', (req, res) => {
-  req.session.destroy(() => { //destroys current session
-    res.sendStatus(204)
+  req.session.destroy(() => {
+      console.log('this is req.session upon logout \n', req.session)
+      res.redirect('/')
   })
 })
 

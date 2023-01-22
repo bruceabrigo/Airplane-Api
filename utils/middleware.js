@@ -2,10 +2,12 @@ const express = require('express')
 const morgan = require('morgan')
 const session = require('express-session')
 const MongoStore = require('connect-mongo')
+const methodOverride = require('method-override')
 require('dotenv').config() 
 
 const middleware = (app => {
   app.use(morgan('tiny')) 
+  app.use(methodOverride('_method'))
   app.use(express.urlencoded({extended: true})) 
   app.use(express.static('public')) 
   app.use(express.json())

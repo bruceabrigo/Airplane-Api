@@ -1,0 +1,15 @@
+{% layout 'layout.liquid' %}
+{% block content %}
+  <div class="container-md">
+    <form action="/airplanes" method="POST">
+      <fieldset>
+        <legend>Create a new Plane</legend>
+        <label class="form-label">Manufacturer: </label>
+        <input type="text" class="form-control" name="manufacturer" placeholder="Insert Aircaft Manufacturer" required>
+        <label class="form-label">Airline: </label>
+        <input type="text" class="form-control" name="airlines" placeholder="Insert Airlines" required>
+      </fieldset>
+      <input type="submit" class="btn btn-success" value="Submit New Plane">
+    </form>
+  </div>
+{% endblock }
