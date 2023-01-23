@@ -8,7 +8,14 @@
           <h5 class="card-header"> {{plane.airline}} </h5>
             <div class="card-body">
               <h5 class="card-title"> {{plane.manufacturer}} </h5>
-              <p class="card-text"> {{plane.model}} </p>
+              <p class="card-text"> 
+                {{plane.model}} 
+                <br>
+                Airborne Status: {{plane.airborne}}
+                <br>
+                Taxi Status: {{plane.taxiStatus}}
+              </p>
+              
               <a href="/airplanes/{{plane.id}}" class="btn btn-info">View {{plane.airline}} {{plane.manufacturer}} {{plane.model}} </a>
             </div>
         </div>

@@ -32,7 +32,7 @@ router.post('/', (req, res) => {
   Airplane.create(req.body)
     .then((airplane) => {
       console.log('New plane added: \n', airplane)
-      res.redirect('/airplanes')
+      res.redirect('/airplanes/mine')
     })
     .catch((err) => {
       res.redirect(`/error?error=${err}`)
@@ -67,22 +67,13 @@ router.get('/mine', (req, res) => {
     })
 })
 
-router.get('/edit/:id', (req,res) => {
-  const planeId = req.params.id
-  Airplane.findById(planeId)
-    .then(planes => {
-      res.render('planes/edit', {planes, ...req.session})
-    })
-    .catch(err => {
-      res.redirect(`/error?error=${err}`)
-    })
-})
+
 
 /* ---------------------- Request Updated User Specific Crafts ---------------------- */
 
-router.get('/edit/:id', (req, res) => {
-  const airplaneId = req.params.id
-  Airplane.find(airplaneId)
+router.get('/edit/:id', (req,res) => {
+  const planeId = req.params.id
+  Airplane.findById(planeId)
     .then(planes => {
       res.render('planes/edit', {planes, ...req.session})
     })
@@ -96,15 +87,11 @@ router.put('/:id', (req, res) => {
   const id = req.params.id
   Airplane.findById(id)
     .then(airplanes => {
-      // if owner of fruit is logged in
       if(airplanes.owner == req.session.userId) {
-        // updated and save the fruit
         res.sendStatus(204)
-        // send success message
         return airplanes.updateOne(req.body)
       } else {
-        // otherwise send 401 unauthorized status
-            res.redirect(`/error?error=${err}`)
+        res.redirect(`/error?error=You%20Are%20not%20allowed%20to%20edit%20this%20aircraft`)
       }
     })
     .catch(err => {
@@ -119,10 +106,13 @@ router.delete('/:id', (req, res) => {
   Airplane.findById(id)
     .then(airplanes =>{
       if(airplanes.owner == req.session.userId) { // authenticates that userId matches userId in current session
-        res.sendStatus(204)
+        return airplanes.deleteOne()
       } else {
-        res.sendStatus(401)
+        res.redirect(`/error?error=You%20Are%20not%20allowed%20to%20delete%20this%20aircraft`)
       }
+    })
+    .then(() => {
+      res.redirect('/airplanes/mine')
     })
     .catch(err => {
       console.log(err)
@@ -143,6 +133,7 @@ router.delete('/:id', (req, res) => {
 // })
 
 /* ---------------------- Shows User Specific Crafts ---------------------- */
+
 router.get('/:id', (req, res) => {
   const planeId = req.params.id
   Airplane.findById(planeId)

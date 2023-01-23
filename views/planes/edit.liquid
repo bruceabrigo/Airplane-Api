@@ -1,0 +1,24 @@
+
+{% layout 'layout.liquid' %}
+{% block content %}
+    <div class="container-sm">
+        <form action="/airplanes/{{planes.id}}?_method=PUT" method="POST">
+        <h2> {{planes.airline}} {{planes.manufacturer}} {{planes.model}} </h2>
+            <fieldset>
+                <legend>Edit: {{planes.airline}} {{planes.manufacturer}} {{planes.model}}</legend>
+                <label class="form-label">Manufacturer: </label>
+                <input type="text" class="form-control" name="manufacturer" placeholder="Insert Aircaft Manufacturer" required>
+                <label class="form-label">Model: </label>
+                <input type="text" class="form-control" name="model" placeholder="Insert Model (e.g. Boeing 777/Airbus A380" required>
+                <label class="form-label">Airline: </label>
+                <input type="text" class="form-control" name="airline" placeholder="Insert Airline (e.g. Delta/United/America/etc..." required>
+                <label class="form-label">Airborne: </label>
+                <input type="boolean" class="form-control" name="airborne" placeholder="true/false" required>
+                <label class="form-label">Taxi Status: </label>
+                <input type="text" class="form-control" name="taxiStatus" placeholder="Insert Taxi Status (e.g. Requsting Pushback / leave black if airborne">
+            </fieldset>
+            <input type="submit" class="btn btn-success" value="CONFIRM">
+            <a href="/airplanes/{{planes.id}}" class="btn btn-warning">Back</a>
+        </form>
+    </div>
+{% endblock %}
