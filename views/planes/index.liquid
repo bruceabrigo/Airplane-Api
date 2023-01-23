@@ -9,12 +9,15 @@
             <div class="card-body">
               <h5 class="card-title"> {{plane.manufacturer}} </h5>
               <p class="card-text"> {{plane.model}} </p>
-              <a href="/airplanes/{{plane.id}}" class="btn btn-info">View {{plane.airline}} {{airline.manufacturer}} {{airplane.model}} </a>
+              <a href="/airplanes/{{plane.id}}" class="btn btn-info">View {{plane.airline}} {{plane.manufacturer}} {{plane.model}} </a>
             </div>
         </div>
       {% endfor %}
     </div>
   {% else %}
-
+      <div class="container-md">
+        <h2>User has not added Aircafts to the Data Base</h2>
+        <a href="/airplanes/new" class="btn btn-warning">Add Aircaft</a>
+      </div>
   {% endif %}
 {% endblock %}

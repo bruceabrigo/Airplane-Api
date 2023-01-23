@@ -1,15 +1,16 @@
-{% layout 'layout.layout' %}
+{% layout 'layout.liquid' %}
 {% block content %}
   <div class="container-md">
     <article>
       <h2> {{plane.manufacturer}} </h2>
-      <h4>The model of this plane is {{airplane.model}} </h4>
-      {% if airplane.owner == userId %}
+      <h4>The model of this plane is {{plane.model}} </h4>
+      <h4>Airline operator is: {{plane.airline}} </h4>
+      {% if plane.owner == userId %}
         <hr>
         <div class="btn-group">
-          <a href="/airplanes/edit/{{airplane.id}}" class="btn btn-primary">Edit {{airplane.manufacturer}} </a>
-          <form action="/airplanes/{{airplane.id}}?_method=DELETE" method="POST">
-            <input type="submit" class="btn btn-danger" value="Delete {{airplane.manufacturer}}"> 
+          <a href="/airplanes/edit/{{plane.id}}" class="btn btn-primary">Edit {{plane.manufacturer}} </a>
+          <form action="/airplanes/{{plane.id}}?_method=DELETE" method="POST">
+            <input type="submit" class="btn btn-danger" value="Delete {{plane.manufacturer}}"> 
           </form>
         </div>
       {% endif %}

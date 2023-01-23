@@ -6,10 +6,16 @@
         <legend>Create a new Plane</legend>
         <label class="form-label">Manufacturer: </label>
         <input type="text" class="form-control" name="manufacturer" placeholder="Insert Aircaft Manufacturer" required>
+        <label class="form-label">Model: </label>
+        <input type="text" class="form-control" name="model" placeholder="Insert Model (e.g. Boeing 777/Airbus A380" required>
         <label class="form-label">Airline: </label>
-        <input type="text" class="form-control" name="airlines" placeholder="Insert Airlines" required>
+        <input type="text" class="form-control" name="airline" placeholder="Insert Airline (e.g. Delta/United/America/etc..." required>
+        <label class="form-label">Airborne: </label>
+        <input type="boolean" class="form-control" name="airborne" placeholder="true/false" required>
+        <label class="form-label">Taxi Status: </label>
+        <input type="text" class="form-control" name="taxiStatus" placeholder="Insert Taxi Status (e.g. Requsting Pushback / leave black if airborne">
       </fieldset>
       <input type="submit" class="btn btn-success" value="Submit New Plane">
     </form>
   </div>
-{% endblock }
+{% endblock %}

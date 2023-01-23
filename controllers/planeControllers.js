@@ -4,7 +4,7 @@ require('dotenv').config()
 
 const router = express.Router()
 
-/* -- INDEX -- */
+/* ---------------------- INDEX ---------------------- */
 
 router.get('/', (req, res) => {
   const { username, loggedIn, userId } = req.session
@@ -16,12 +16,27 @@ router.get('/', (req, res) => {
     })
     .catch(err => {
       console.log(err)
-      res.status(404).json(err) //sends 404 status if link cannot be found
+      res.redirect(`/error?error=${err}`)
     })
 })
 
-router.get('/new', (req, res) => {
-  res.render('airplanes/new', { ...req.session })
+/* ---------------------- Creates New Craft ---------------------- */
+
+
+router.get('/new', (req, res) => { //error need fixing come back
+  res.render('planes/new', { ...req.session })
+})
+
+router.post('/', (req, res) => {
+  req.body.owner = req.session.userId
+  Airplane.create(req.body)
+    .then((airplane) => {
+      console.log('New plane added: \n', airplane)
+      res.redirect('/airplanes')
+    })
+    .catch((err) => {
+      res.redirect(`/error?error=${err}`)
+    })
 })
 
 /* -- POST (create new plane) -- */
@@ -29,31 +44,54 @@ router.post('/', (req, res) => {
   req.body.owner = req.session.userId
   const newPlane = req.body
   Airplane.create(newPlane)
-      // send a 201 status, along with the json response of the new fruit
       .then(planes => {
           res.status(201).json({planes: planes.toObject()})
       })
-      // send an error if one occurs
       .catch(err => {
           console.log(err)
-          res.status(404).json(err) //sends 404 status if link cannot be found
-      })
+          res.redirect(`/error?error=${err}`)
+        })
 })
 
-/* -- GET (user specific aircraft) -- */
-// must be logged in to find aircraft's owned by the user
-// router.get('/loggedin', (req, res) => { // used /loggedin in url to find user specific crafts
-//   Airplane.find({owner: req.session.userId})
-//   .then(airplanes => {
-//     res.status(200).json({airplanes: airplanes})
-//   })
-//   .catch(err => {
-//     console.log(err)
-//     res.status(404).json(err) //sends 404 status if link cannot be found
-//   })
-// })
+/* ---------------------- Shows User Specific Crafts ---------------------- */
 
-/* -- UPDATE (user specific aircraft) -- */
+router.get('/mine', (req, res) => {
+  Airplane.find(({owner: req.session.userId}))
+  .populate('owner', 'username')
+    .then((planes) => {
+      res.render('planes/index', {planes, ...req.session})
+    })
+    .catch(err => {
+      console.log(err)
+      res.redirect(`/error?error=${err}`)
+    })
+})
+
+router.get('/edit/:id', (req,res) => {
+  const planeId = req.params.id
+  Airplane.findById(planeId)
+    .then(planes => {
+      res.render('planes/edit', {planes, ...req.session})
+    })
+    .catch(err => {
+      res.redirect(`/error?error=${err}`)
+    })
+})
+
+/* ---------------------- Request Updated User Specific Crafts ---------------------- */
+
+router.get('/edit/:id', (req, res) => {
+  const airplaneId = req.params.id
+  Airplane.find(airplaneId)
+    .then(planes => {
+      res.render('planes/edit', {planes, ...req.session})
+    })
+    .catch(err => {
+      res.redirect(`/error?error=${err}`)
+    })
+})
+
+/* ---------------------- UPDATE (user specific aircraft) ------------------------*/
 router.put('/:id', (req, res) => {
   const id = req.params.id
   Airplane.findById(id)
@@ -66,7 +104,7 @@ router.put('/:id', (req, res) => {
         return airplanes.updateOne(req.body)
       } else {
         // otherwise send 401 unauthorized status
-        res.sendStatus(401)
+            res.redirect(`/error?error=${err}`)
       }
     })
     .catch(err => {
@@ -92,28 +130,29 @@ router.delete('/:id', (req, res) => {
     })
 })
 
-router.get('/:id', (req, res) => {
-  const id = req.params.id
-  Airplane.findById(id)
-    .then(airplanes => {
-      res.json({airplanes: airplanes})
-    })
-    .catch(err => {
-      console.log(err)
-      res.status(404).json(err)
-    })
-})
+// router.get('/:id', (req, res) => {
+//   const id = req.params.id
+//   Airplane.findById(id)
+//     .then(airplanes => {
+//       res.json({airplanes: airplanes})
+//     })
+//     .catch(err => {
+//       console.log(err)
+//       res.status(404).json(err)
+//     })
+// })
 
-/* -- SHOW aircrafts-- */
+/* ---------------------- Shows User Specific Crafts ---------------------- */
 router.get('/:id', (req, res) => {
-  const id = req.params.id
-  Airplane.findById(id)
-    .populate('airplane')
-    .then(airplane => {
-      res.render('airplanes/show.liquid', {airplane, ...req.session})
+  const planeId = req.params.id
+  Airplane.findById(planeId)
+    .then((plane) => {
+      console.log('we found: \n', plane)
+      res.render('planes/show', {plane, ...req.session})
     })
-    .catch(err => {
+    .catch((err) => {
       console.log(err)
+      res.json({err})
     })
 })
 
