@@ -23,7 +23,7 @@ router.get('/', (req, res) => {
 /* ---------------------- Creates New Craft ---------------------- */
 
 
-router.get('/new', (req, res) => { //error need fixing come back
+router.get('/new', (req, res) => {
   res.render('planes/new', { ...req.session })
 })
 
