@@ -88,11 +88,14 @@ router.put('/:id', (req, res) => {
   Airplane.findById(id)
     .then(airplanes => {
       if(airplanes.owner == req.session.userId) {
-        res.sendStatus(204)
+        // res.sendStatus(204)
         return airplanes.updateOne(req.body)
       } else {
         res.redirect(`/error?error=You%20Are%20not%20allowed%20to%20edit%20this%20aircraft`)
       }
+    })
+    .then(() => {
+        res.redirect('/airplanes/mine')
     })
     .catch(err => {
       console.log(err)
